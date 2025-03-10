@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">Task List</h1>
+
+    <!-- Search Form -->
+    <form method="GET" action="{% url 'task_list' %}" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search tasks..." value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    <a href="{% url 'task_create' %}" class="btn btn-primary mb-3">Add Task</a>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr class="{% if task.status == 'Overdue' %}table-danger{% elif task.status == 'Completed' %}table-success{% endif %}">
+                <td>{{ task.title }}</td>
+                <td>{{ task.description }}</td>
+                <td>{{ task.due_date }}</td>
+                <td>
+                    <span class="badge 
+                        {% if task.status == 'Overdue' %}bg-danger
+                        {% elif task.status == 'Completed' %}bg-success
+                        {% else %}bg-warning{% endif %}">
+                        {{ task.status }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'task_update' task.pk %}" class="btn btn-warning">Edit</a>
+                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No tasks found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
